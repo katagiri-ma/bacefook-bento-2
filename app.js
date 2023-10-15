@@ -3,21 +3,21 @@ console.log(window.bacefook);
 // ロード時
 window.addEventListener("load", () => {
   let username = localStorage.getItem("username");
-  if(!username){
+  if (!username) {
     username = window.prompt("What is your name?");
     localStorage.setItem("username", username);
-    if(username.length === 0 || username === null) {
+    if (username.length === 0 || username === null) {
       localStorage.clear();
       const userEl = document.querySelector("h3");
       userEl.innerText = `ユーザー名： unknown`;
-      logButtonEl.innerText="ログイン"
-    } 
+      logButtonEl.innerText = "ログイン";
+    }
   }
-  
-  if(username.length !== 0 && username !== null){
+
+  if (username.length !== 0 && username !== null) {
     const userEl = document.querySelector("h3");
     userEl.innerText = `ユーザー名： ${username}`;
-    logButtonEl.innerText="ログアウト"
+    logButtonEl.innerText = "ログアウト";
   }
   getNews();
 });
@@ -69,24 +69,31 @@ function getNews() {
 
 // 更新ボタン
 const buttonEl = document.querySelector(".button");
-console.log(buttonEl);
+// console.log(buttonEl);
 
 buttonEl.addEventListener("click", () => {
   const postingEl = document.querySelectorAll(".posting");
   for (let i = 0; i < postingEl.length; i++) {
-    postingEl[i].remove()
+    postingEl[i].remove();
   }
 
   const newTopicEl = document.getElementsByClassName("topic")[0];
-  newTopicEl.remove();
-  count = 0;
+  if (newTopicEl !== undefined) {
+    newTopicEl.remove();
+    count = 0;
+  }
+  // 新着表示がない時に実行されるとdocument.getElementsByClassName("topic")[0]が取得できない為
+  // エラーで流れが止まり、この下にあるgetNews()が実行されない
+  // const newTopicEl = document.getElementsByClassName("topic")[0];
+  // newTopicEl.remove();
+  // count = 0;
 
   getNews();
 });
 
 // 投稿ボタン
 const addButtonEl = document.getElementById("addButton");
-console.log(addButtonEl);
+// console.log(addButtonEl);
 addButtonEl.addEventListener("click", () => {
   let textEl = document.getElementById("newTopic");
 
@@ -100,14 +107,10 @@ addButtonEl.addEventListener("click", () => {
     "angry",
     "frustrated",
     "excited",
-    ""
+    "",
   ];
 
-  const images = [
-    "./images/1.jpg",
-    "./images/2.png",
-    "./images/3.png",
-  ];
+  const images = ["./images/1.jpg", "./images/2.png", "./images/3.png"];
 
   const mypost = {
     feeling: feelings[Math.floor(Math.random() * feelings.length)],
@@ -119,19 +122,20 @@ addButtonEl.addEventListener("click", () => {
     text: textEl.value,
 
     timestamp: new Date(),
-
-  }
+  };
 
   window.bacefook.newsfeed.push(mypost);
 
   const postingEl = document.querySelectorAll(".posting");
   for (let i = 0; i < postingEl.length; i++) {
-    postingEl[i].remove()
+    postingEl[i].remove();
   }
 
   const newTopicEl = document.getElementsByClassName("topic")[0];
-  newTopicEl.remove();
-  count = 0;
+  if (newTopicEl !== undefined) {
+    newTopicEl.remove();
+    count = 0;
+  }
 
   getNews();
 
@@ -140,30 +144,29 @@ addButtonEl.addEventListener("click", () => {
 
 // ログイン・ログアウト
 const logButtonEl = document.getElementsByClassName("logButton")[0];
-console.log("log", logButtonEl);
+// console.log("log", logButtonEl);
 logButtonEl.addEventListener("click", () => {
   let username = localStorage.getItem("username");
 
-  
   if (!username) {
     username = window.prompt("What is your name?");
 
-    if(username.length === 0 || username === null) {
+    if (username.length === 0 || username === null) {
       localStorage.clear();
       userEl.innerText = `ユーザー名： unknown`;
-      logButtonEl.innerText="ログイン"
+      logButtonEl.innerText = "ログイン";
     } else {
       localStorage.setItem("username", username);
       const userEl = document.querySelector("h3");
       userEl.innerText = `ユーザー名： ${username}`;
-      logButtonEl.innerText="ログアウト"
+      logButtonEl.innerText = "ログアウト";
       getNews();
     }
   } else {
     localStorage.clear();
     const userEl = document.querySelector("h3");
     userEl.innerText = `ユーザー名： unknown`;
-    logButtonEl.innerText="ログイン"
+    logButtonEl.innerText = "ログイン";
   }
 });
 
@@ -172,21 +175,20 @@ let count = 0;
 
 const intervalId = setInterval(() => {
   let newTopic = bacefook.newsfeed.length;
-  
-  if (opentopic !== newTopic){
+
+  if (opentopic !== newTopic) {
     const topicEl = document.createElement("div");
     topicEl.className = "topic";
-    topicEl.innerText = "新着"+(newTopic - opentopic) + "件あります。";
-    
+    topicEl.innerText = "新着" + (newTopic - opentopic) + "件あります。";
+
     if (count === 0) {
-      console.log("count",count);
+      // console.log("count",count);
       // containerEl.prepend(topicEl);
       containerEl.before(topicEl);
       count = 1;
     } else {
       const newTopicEl = document.getElementsByClassName("topic")[0];
-      newTopicEl.innerText = "新着"+(newTopic - opentopic) + "件あります。";
+      newTopicEl.innerText = "新着" + (newTopic - opentopic) + "件あります。";
     }
   }
 }, 100);
-
